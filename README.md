@@ -18,9 +18,10 @@ cd CheckStock
 Выполните команды запуска из папки `CheckStock`, в которой находится `compose.yaml`:
 
 ```sh
-docker compose up --build -d
-docker compose exec app python -m app.seed
+docker compose up --build -d --wait && docker compose exec app python -m app.seed
 ```
+
+Команды выполняются последовательно: `--wait` ждёт готовности PostgreSQL и веб-приложения, затем `&&` запускает загрузку данных только при успешном старте. Не запускайте `app.seed` параллельно со сборкой и первым запуском приложения.
 
 Откройте [CheckStock](http://localhost:8000). Описание API: [Swagger](http://localhost:8000/docs).
 
