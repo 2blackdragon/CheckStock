@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>CheckStock — складской учёт</title>
+    <link rel="stylesheet" href="/static/style.css" />
+    <script defer src="/static/app.js"></script>
+  </head>
+  <body>
+    <aside class="sidebar">
+      <a class="brand" href="/">▣ <span>CheckStock</span></a
+      ><small>УЧЁТ ТОВАРОВ</small>
+      <nav aria-label="Разделы">
+        <button data-view="stocks" class="active">▦ Остатки</button
+        ><button data-view="operations">⇄ Операции</button
+        ><button data-view="warehouses">⌂ Склады</button
+        ><button data-view="history">◷ История</button>
+      </nav>
+      <div class="sidefoot">
+        Один магазин<br /><span>Фулфилмент · FBS · FBO</span>
+      </div>
+    </aside>
+    <main>
+      <header>
+        <div>
+          <div class="eyebrow">СКЛАДСКОЙ УЧЁТ</div>
+          <h1 id="title">Остатки товаров</h1>
+          <p id="subtitle">
+            Где находится товар и сколько доступно для отправки.
+          </p>
+        </div>
+        <button id="new" class="primary">＋ Новая операция</button>
+      </header>
+      <div class="toolbar">
+        <label class="search"
+          >⌕
+          <input
+            id="search"
+            placeholder="Артикул или название"
+            aria-label="Поиск товара"
+            maxlength="100" /></label
+        ><select id="warehouse" aria-label="Фильтр по складу">
+          <option value="">Все ФФ, включая архивные</option></select
+        ><select id="mode" aria-label="Фильтр состояния">
+          <option value="all">Все товары</option>
+          <option value="reserved">С резервом FBS</option>
+          <option value="transit">В пути</option></select
+        ><select id="status" hidden aria-label="Статусы операций">
+          <option value="active">Требуют действия</option>
+          <option value="all">Все операции</option></select
+        ><label id="date-label" hidden
+          >С даты <input type="date" id="since" /></label
+        ><button id="refresh">↻ Обновить</button>
+      </div>
+      <p id="note" class="note">
+        Резерв входит в остаток на ФФ. Товар в пути учитывается отдельно.
+        Нажмите на товар для детализации.
+      </p>
+      <div id="message" role="status" aria-live="polite"></div>
+      <section class="card" aria-label="Данные">
+        <div class="tablewrap" id="content"></div>
+        <footer id="pagination">
+          <span id="page-label"></span>
+          <div>
+            <button id="prev">← Назад</button><button id="next">Далее →</button>
+          </div>
+        </footer>
+      </section>
+    </main>
+    <dialog id="form-dialog">
+      <form id="operation-form">
+        <div class="dialog-head">
+          <h2>Новая операция</h2>
+          <button
+            type="button"
+            class="close"
+            data-close="form-dialog"
+            aria-label="Закрыть"
+          >
+            ×
+          </button>
+        </div>
+        <label
+          >Действие<select name="type" id="op-type">
+            <option value="receipt">Оприходовать товар</option>
+            <option value="transfer">Отправить между ФФ</option>
+            <option value="fbs">Зарезервировать FBS</option>
+            <option value="fbo">Отправить FBO</option>
+          </select></label
+        ><label
+          >Товар<select
+            name="product_id"
+            id="op-product"
+            required
+          ></select></label
+        ><label id="source-label"
+          >Склад отправления<select
+            name="source_warehouse_id"
+            id="op-source"
+          ></select></label
+        ><label id="dest-label"
+          >Склад назначения<select
+            name="destination_warehouse_id"
+            id="op-dest"
+          ></select></label
+        ><label
+          >Количество<input
+            type="number"
+            min="1"
+            max="1000000"
+            step="1"
+            name="quantity"
+            required
+            value="1"
+        /></label>
+        <p id="available" class="note"></p>
+        <p id="form-error" role="alert"></p>
+        <div class="actions">
+          <button type="button" data-close="form-dialog">Отмена</button
+          ><button class="primary" type="submit" id="submit-op">
+            Подтвердить
+          </button>
+        </div>
+      </form>
+    </dialog>
+    <dialog id="detail-dialog" class="detail">
+      <div class="dialog-head">
+        <h2 id="detail-title">Товар</h2>
+        <button class="close" data-close="detail-dialog" aria-label="Закрыть">
+          ×
+        </button>
+      </div>
+      <div id="detail-content"></div>
+    </dialog>
+    <dialog id="confirm-dialog">
+      <form id="confirm-form">
+        <h2 id="confirm-title"></h2>
+        <p id="confirm-text"></p>
+        <label id="name-label" hidden
+          >Название<input id="warehouse-name" maxlength="100" required
+        /></label>
+        <p id="confirm-error" role="alert"></p>
+        <div class="actions">
+          <button type="button" data-close="confirm-dialog">Отмена</button
+          ><button type="submit" class="primary">Подтвердить</button>
+        </div>
+      </form>
+    </dialog>
+  </body>
+</html>
